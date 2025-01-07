@@ -3,7 +3,10 @@ import {
   Controller,
   Get,
   Headers,
+  Param,
+  ParseIntPipe,
   Post,
+  Put,
   UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -34,5 +37,10 @@ export class UsersController {
   @Get('/auth/jwt')
   findOneUserByJwt(@Headers('auth') token: string) {
     return this.usersService.findOneUserByJwt(token);
+  }
+
+  @Put(':id')
+  updateUser(@Param('id', ParseIntPipe) id: Number) {
+    return this.usersService.updateUser(id);
   }
 }

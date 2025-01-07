@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { error } from 'console';
 
 @Injectable()
 export class UsersService {
@@ -31,7 +32,6 @@ export class UsersService {
 
     if (isMatch) {
       const token = this.jwtService.sign(foundedUserById);
-      console.log(token);
       return foundedUserById;
     }
 
@@ -51,5 +51,19 @@ export class UsersService {
     return this.databaseService.user.create({
       data: { ...user, password: hashedPassword },
     });
+  }
+
+  updateUser(id: Number) {
+    try {
+      throw new HttpException(
+        { status: HttpStatus.UNAUTHORIZED, messege: 'unauthorized' },
+        HttpStatus.UNAUTHORIZED,
+        {
+          cause: error,
+        },
+      );
+    } catch (e) {
+      throw e;
+    }
   }
 }
