@@ -1,11 +1,18 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { DatabaseModule } from './database/database.module';
 import { PostsModule } from './posts/posts.module';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from './filters/http.filter';
+import { TimeOutInterceptor } from './intercepters/timeOut.interceptor';
+import { LoggerMiddleware } from './middlewares/logger.middleware';
 
 @Module({
   imports: [UsersModule, DatabaseModule, PostsModule],
@@ -16,6 +23,17 @@ import { HttpExceptionFilter } from './filters/http.filter';
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TimeOutInterceptor,
+    },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .exclude({ path: 'users', method: RequestMethod.GET })
+      .forRoutes('*');
+  }
+}

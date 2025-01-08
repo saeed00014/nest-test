@@ -53,7 +53,7 @@ export class UsersService {
     });
   }
 
-  updateUser(id: Number) {
+  updateUser(id: number) {
     try {
       throw new HttpException(
         { status: HttpStatus.UNAUTHORIZED, messege: 'unauthorized' },
