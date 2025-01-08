@@ -4,6 +4,7 @@ import { DatabaseService } from 'src/database/database.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { error } from 'console';
+import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class UsersService {
