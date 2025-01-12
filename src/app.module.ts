@@ -4,14 +4,34 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { DatabaseModule } from './database/database.module';
 import { PostsModule } from './posts/posts.module';
-import { APP_FILTER } from '@nestjs/core';
-import { HttpExceptionFilter } from './filters/http.filter';
+import { ConditionalModule, ConfigModule } from '@nestjs/config';
+import * as Joi from 'joi';
+import { CustomEnv } from './envv/env.get.custom';
 
 @Module({
-  imports: [UsersModule, DatabaseModule, PostsModule],
+  imports: [
+    // UsersModule,
+    // DatabaseModule,
+    // PostsModule,
+    ConditionalModule.registerWhen(UsersModule, () => {
+      return process.env.PORT == '3000' ? true : false;
+    }),
+    ConfigModule.forRoot({
+      envFilePath: ['env/development.env', '.env'],
+      expandVariables: true,
+      validationSchema: Joi.object({
+        DATABASE_URL: Joi.string(),
+        PORT: Joi.number(),
+      }),
+      validationOptions: {
+        allowUnknown: true,
+      },
+    }),
+  ],
   controllers: [AppController],
   providers: [
     AppService,
+    CustomEnv,
     // {
     //   provide: APP_FILTER,
     //   useClass: HttpExceptionFilter,
